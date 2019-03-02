@@ -1,0 +1,26 @@
+{
+  "name": "resourcex",
+  "version": "0.0.1",
+  "description": "Utilities to wrap global variables into observables without the learning curve of rxjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xch91/resourcex.git"
+  },
+  "keywords": [
+    "rxjs",
+    "observable",
+    "reactive",
+    "reactivex",
+    "frp"
+  ],
+  "author": "Xie Chenhong <chenhong.xie@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/xch91/resourcex/issues"
+  },
+  "homepage": "https://github.com/xch91/resourcex"
+}
