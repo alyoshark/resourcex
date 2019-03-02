@@ -22,5 +22,8 @@
   "bugs": {
     "url": "https://github.com/xch91/resourcex/issues"
   },
-  "homepage": "https://github.com/xch91/resourcex"
+  "homepage": "https://github.com/xch91/resourcex",
+  "dependencies": {
+    "rxjs": "^6.4.0"
+  }
 }
