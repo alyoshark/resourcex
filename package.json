@@ -1,10 +1,14 @@
 {
   "name": "resourcex",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Utilities to wrap global variables into observables without the learning curve of rxjs",
   "main": "index.js",
+  "files": [
+    "lib/**/*"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
@@ -25,5 +29,8 @@
   "homepage": "https://github.com/xch91/resourcex",
   "dependencies": {
     "rxjs": "^6.4.0"
+  },
+  "devDependencies": {
+    "typescript": "^3.3.3333"
   }
 }
