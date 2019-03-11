@@ -109,17 +109,24 @@ const Demo = () => {
 ## API
 
 - `State({actionName: {epic, reducer}, ...})`
-    > create a state with value exposed as an observable in `$`
-    > and corresponding actions defined by a name, with `epic` and `reducer` fields:
-    - `epic`: a function that takes in arbitrary parameters and returns a value wrapped in observable
-    - `reducer`: a function that calculates the end result based on the old value and the new value returned by the `epic`;
-      optional if blind substitution of old with new
+
+  > create a state with value exposed as an observable in `$`,
+  > reactivity status as an observable in `lock$` (`true` when the State is locked),
+  > and corresponding actions defined by a name, with `epic` and `reducer` fields:
+
+  - `epic`: a function that takes in arbitrary parameters and returns a value wrapped in observable
+  - `reducer`: a function that calculates the end result based on the old value and the new value returned by the `epic`;
+    optional if blind substitution of old with new
+  - `lock`: if set to `true`, the State would stop reacting to any action on it until the current action finishes;
+    useful for HTTP request throttling.
 
 - `NaiveState(initVal)`
-    > create a state with an initial value, expose a `set` call to update its value
+
+  > create a state with an initial value, expose a `set` call to update its value
 
 - `LocalStorageState(localStorageKey, initVal)`
-    > almost same as `NaiveState`, just that the value is persisted into local storage with key specified
+
+  > almost same as `NaiveState`, just that the value is persisted into local storage with key specified
 
 - `wrap(anyFunc)`:
-    > takes in any function and convert it into a function that takes the same parameters and returns an observable containing the result
+  > takes in any function and convert it into a function that takes the same parameters and returns an observable containing the result
