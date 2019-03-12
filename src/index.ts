@@ -1,6 +1,6 @@
 /* eslint-disable object-curly-newline */
 import { Subject, BehaviorSubject, ReplaySubject, from, of } from 'rxjs';
-import { scan, take, startWith } from 'rxjs/operators';
+import { scan, take } from 'rxjs/operators';
 import { ISpec, IState, IAction, ILocalStorage } from './interfaces';
 /* eslint-enable object-curly-newline */
 
@@ -14,9 +14,7 @@ function createState<R>(spec: ISpec<R>, seed?: R): IState<R> {
     (spec[action].reducer || DEFAULT_REDUCER)(curr, data);
   const subject = new Subject<{ action: string; data: any }>();
   const $ = new ReplaySubject<R>(1);
-  const obs = subject.pipe(scan(scanner));
-  if (seed) obs.pipe(startWith(seed)).subscribe($);
-  else obs.subscribe($);
+  subject.pipe(scan(scanner, seed)).subscribe($);
 
   let locker = false;
   const lock$ = new BehaviorSubject<Boolean>(locker);
