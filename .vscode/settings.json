@@ -1,5 +1,7 @@
 {
-    "editor.formatOnSave": true,
-    "prettier.endOfLine": "lf",
-    "prettier.singleQuote": true
+  "editor.formatOnSave": true,
+  "prettier.trailingComma": "all",
+  "prettier.tslintIntegration": true,
+  "prettier.endOfLine": "lf",
+  "prettier.singleQuote": true
 }

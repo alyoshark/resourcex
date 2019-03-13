@@ -6,7 +6,7 @@ This project provides a few handy utilities to make global variables slightly ea
 comparing to traditional [Flux Architecture](https://facebook.github.io/flux/).
 
 By using the utilities inside, plus some observable enhancement tools in your favorite MVVM framework,
-global store can be organized into a set of highly structured resources. Each resource exposes
+global store can be organized into a set of highly structured **resources**. Each resource exposes
 its value and corresponding mutating actions.
 In this way, frontend applications can integrate with backend RESTful API with less boilerplate.
 
@@ -18,11 +18,11 @@ can easily make something more elaborate from these basic tools.
 
 ```javascript
 // store.js
-import { NaiveState, State, wrap } from 'resourcex';
+import { NaiveResouce, Resource } from 'resourcex';
 
-export const DummyCounter = NaiveState(0);
+export const DummyCounter = NaivResource(0);
 
-export const Books = State({
+export const Books = Resource({
   get: {
     epic: wrap(async () => [{ id: 1, name: 'Book A' }, { id: 2, name: 'Book B' }]),
     reducer: (curr, val) => val, // ignorable if it's simple substitution like this
@@ -108,25 +108,25 @@ const Demo = () => {
 
 ## API
 
-- `State({actionName: {epic, reducer}, ...})`
+- `Resource({actionName: {epic, reducer}, ...})`
 
-  > create a state with value exposed as an observable in `$`,
-  > reactivity status as an observable in `lock$` (`true` when the State is locked),
+  > create a resource with value exposed as an observable in `$`,
+  > reactivity status as an observable in `lock$` (`true` when the Resource is locked),
   > and corresponding actions defined by a name, with `epic` and `reducer` fields:
 
   - `epic`: a function that takes in arbitrary parameters and returns a value wrapped in observable
   - `reducer`: a function that calculates the end result based on the old value and the new value returned by the `epic`;
     optional if blind substitution of old with new
-  - `lock`: if set to `true`, the State would stop reacting to any action on it until the current action finishes;
+  - `lock`: if set to `true`, the Resource would stop reacting to any action on it until the current action finishes;
     useful for HTTP request throttling.
 
-- `NaiveState(initVal)`
+- `NaiveResource(initVal)`
 
-  > create a state with an initial value, expose a `set` call to update its value
+  > create a resource with an initial value, expose a `set` call to update its value
 
-- `LocalStorageState(localStorageKey, initVal)`
+- `LocalStorageResource(localStorageKey, initVal)`
 
-  > almost same as `NaiveState`, just that the value is persisted into local storage with key specified
+  > almost same as `NaiveResource`, just that the value is persisted into local storage with key specified
 
 - `wrap(anyFunc)`:
   > takes in any function and convert it into a function that takes the same parameters and returns an observable containing the result

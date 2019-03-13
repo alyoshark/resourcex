@@ -1,21 +1,49 @@
-/* eslint-disable object-curly-newline */
-import { Subject, BehaviorSubject, ReplaySubject, from, of } from 'rxjs';
-import { scan, take } from 'rxjs/operators';
+// prettier-ignore
+import { Subject, BehaviorSubject, ReplaySubject, Subscriber, of, from } from 'rxjs';
+import { scan, startWith } from 'rxjs/operators';
 import { ISpec, IState, IAction, ILocalStorage } from './interfaces';
-/* eslint-enable object-curly-newline */
 
 // By default a reducer would just substitute the previous value
 function DEFAULT_REDUCER<R>(_: R, val: R): R {
   return val;
 }
 
-function createState<R>(spec: ISpec<R>, seed?: R): IState<R> {
+export function Resource<R>(spec: ISpec<R>, seed?: R): IState<R> {
   const scanner = (curr: R, { action, data }: { action: string; data: any }) =>
     (spec[action].reducer || DEFAULT_REDUCER)(curr, data);
   const subject = new Subject<{ action: string; data: any }>();
   const $ = new ReplaySubject<R>(1);
   subject.pipe(scan(scanner, seed)).subscribe($);
+  return resourceInit(spec, subject, $);
+}
 
+export function BehaviorResource<R>(spec: ISpec<R>, seed?: R): IState<R> {
+  const scanner = (curr: R, { action, data }: { action: string; data: any }) =>
+    (spec[action].reducer || DEFAULT_REDUCER)(curr, data);
+  const subject = new Subject<{ action: string; data: any }>();
+  const $ = new ReplaySubject<R>(1);
+  subject
+    .pipe(
+      scan(scanner),
+      startWith(seed),
+    )
+    .subscribe($);
+  return resourceInit(spec, subject, $);
+}
+
+function isPromise(p: any) {
+  return p && typeof p.then === 'function';
+}
+
+function isObservable(ob: any) {
+  return ob && typeof ob.subscribe === 'function';
+}
+
+function resourceInit<R>(
+  spec: ISpec<R>,
+  subject: Subject<{ action: string; data: any }>,
+  $: Subject<R>,
+): IState<R> {
   let locker = false;
   const lock$ = new BehaviorSubject<Boolean>(locker);
   const setLocker = (isLocked: boolean) => {
@@ -30,34 +58,29 @@ function createState<R>(spec: ISpec<R>, seed?: R): IState<R> {
       new Promise((resolve, reject) => {
         if (lock && locker) return;
         if (lock) setLocker(true);
-        epic(...params)
-          .pipe(take(1))
-          .subscribe(
-            (data: any) => {
-              subject.next({ action, data });
-              setLocker(false);
-              resolve(data);
-            },
-            (e: Error) => {
-              setLocker(false);
-              reject(e);
-            }
-          );
+        const res = epic(...params);
+        const subscriber = Subscriber.create(
+          (data: any) => {
+            subject.next({ action, data });
+            resolve(data);
+          },
+          (e: Error) => reject(e),
+          () => setLocker(false),
+        );
+        if (isObservable(res)) res.subscribe(subscriber);
+        else if (isPromise(res)) from(res).subscribe(subscriber);
+        else of(res).subscribe(subscriber);
       });
   });
   return result;
-}
-
-export function State<R>(spec: ISpec<R>) {
-  return createState(spec);
 }
 
 export function NaiveSetter<R>(): IAction<R, R> {
   return { epic: (x: R) => of(x), reducer: DEFAULT_REDUCER };
 }
 
-export function NaiveState<R>(init: R) {
-  return createState({ set: NaiveSetter() }, init);
+export function NaiveResource<R>(init: R) {
+  return BehaviorResource({ set: NaiveSetter() }, init);
 }
 
 function LocalStorage(): ILocalStorage {
@@ -86,24 +109,28 @@ function LocalStorage(): ILocalStorage {
       localStorage.removeItem(key);
       if (registered(key)) subjects[key].next(null);
       return of(null);
-    }
+    },
   };
 }
 
 const ls = LocalStorage();
-export function LocalStorageState<R>(key: string, defaultVal: R) {
+export function LocalStorageResource<R>(key: string, defaultVal: R) {
   const fromLS = localStorage.getItem(key);
   const val = fromLS ? JSON.parse(fromLS) : defaultVal;
   window.localStorage.setItem(key, JSON.stringify(val));
-  return createState(
+  return BehaviorResource(
     {
       set: { epic: v => ls.set(key, v) },
-      del: { epic: () => ls.del(key) }
+      del: { epic: () => ls.del(key) },
     },
-    val
+    val,
   );
 }
 
-export function wrap(fn: (...params: any[]) => Promise<any>) {
-  return (...params: any[]) => from(fn(...params));
+export function wrap(fn: (...params: any[]) => any) {
+  return (...params: any[]) => {
+    const res = fn(...params);
+    if (isPromise(res)) return from(res);
+    else return of(res);
+  };
 }
