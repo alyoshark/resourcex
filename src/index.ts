@@ -17,17 +17,12 @@ export function Resource<R>(spec: ISpec<R>, seed?: R): IState<R> {
   return resourceInit(spec, subject, $);
 }
 
-export function BehaviorResource<R>(spec: ISpec<R>, seed?: R): IState<R> {
+export function BehaviorResource<R>(spec: ISpec<R>, seed: R): IState<R> {
   const scanner = (curr: R, { action, data }: { action: string; data: any }) =>
     (spec[action].reducer || DEFAULT_REDUCER)(curr, data);
   const subject = new Subject<{ action: string; data: any }>();
-  const $ = new ReplaySubject<R>(1);
-  subject
-    .pipe(
-      scan(scanner),
-      startWith(seed),
-    )
-    .subscribe($);
+  const $ = new BehaviorSubject<R>(seed);
+  subject.pipe(scan(scanner, seed)).subscribe($);
   return resourceInit(spec, subject, $);
 }
 
