@@ -59,7 +59,10 @@ function resourceInit<R>(
             subject.next({ action, data });
             resolve(data);
           },
-          (e: Error) => reject(e),
+          (e: Error) => {
+            setLocker(false);
+            reject(e);
+          },
           () => setLocker(false),
         );
         if (isObservable(res)) res.subscribe(subscriber);
