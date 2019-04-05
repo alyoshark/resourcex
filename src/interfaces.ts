@@ -1,10 +1,12 @@
 import { Observable } from 'rxjs';
 
+// R is for Resource Type, T is any Return Type of epic function
+
 type IReducer<R, T> = (curr: R, val: T) => R;
-type IEpic<R> = (...args: any[]) => Observable<R>;
+type IEpic<T> = (...args: any[]) => Observable<T>;
 
 export interface IAction<R, T> {
-  epic: IEpic<R>;
+  epic: IEpic<T>;
   reducer?: IReducer<R, T>;
   lock?: Boolean;
 }
@@ -13,7 +15,7 @@ export interface ISpec<R> {
   [key: string]: IAction<R, any>;
 }
 
-export interface IState<R> {
+export interface IResource<R> {
   $: Observable<R>;
   lock$: Observable<Boolean>;
   // Union with Observable<any> only to make type check work >___<

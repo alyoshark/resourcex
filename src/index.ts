@@ -1,14 +1,14 @@
 // prettier-ignore
-import { Subject, BehaviorSubject, ReplaySubject, Subscriber, of, from } from 'rxjs';
-import { scan, startWith } from 'rxjs/operators';
-import { ISpec, IState, IAction, ILocalStorage } from './interfaces';
+import { Subject, BehaviorSubject, ReplaySubject, Subscriber, of, from, Observable } from 'rxjs';
+import { scan } from 'rxjs/operators';
+import { ISpec, IResource, IAction, ILocalStorage } from './interfaces';
 
 // By default a reducer would just substitute the previous value
 function DEFAULT_REDUCER<R>(_: R, val: R): R {
   return val;
 }
 
-export function Resource<R>(spec: ISpec<R>, seed?: R): IState<R> {
+export function Resource<R>(spec: ISpec<R>, seed?: R): IResource<R> {
   const scanner = (curr: R, { action, data }: { action: string; data: any }) =>
     (spec[action].reducer || DEFAULT_REDUCER)(curr, data);
   const subject = new Subject<{ action: string; data: any }>();
@@ -17,7 +17,7 @@ export function Resource<R>(spec: ISpec<R>, seed?: R): IState<R> {
   return resourceInit(spec, subject, $);
 }
 
-export function BehaviorResource<R>(spec: ISpec<R>, seed: R): IState<R> {
+export function BehaviorResource<R>(spec: ISpec<R>, seed: R): IResource<R> {
   const scanner = (curr: R, { action, data }: { action: string; data: any }) =>
     (spec[action].reducer || DEFAULT_REDUCER)(curr, data);
   const subject = new Subject<{ action: string; data: any }>();
@@ -38,7 +38,7 @@ function resourceInit<R>(
   spec: ISpec<R>,
   subject: Subject<{ action: string; data: any }>,
   $: Subject<R>,
-): IState<R> {
+): IResource<R> {
   let locker = false;
   const lock$ = new BehaviorSubject<Boolean>(locker);
   const setLocker = (isLocked: boolean) => {
@@ -46,7 +46,14 @@ function resourceInit<R>(
     lock$.next(locker);
   };
 
-  const result: IState<R> = { $, lock$ };
+  type TResource<S extends ISpec<R>> = {
+    [P in keyof S]?: ((...args: any[]) => Promise<any>) | Observable<any>
+  } & {
+    $: Observable<R>;
+    lock$: Observable<Boolean>;
+  };
+
+  const result: TResource<ISpec<R>> = { $, lock$ };
   Object.keys(spec).forEach(action => {
     const { epic, lock } = spec[action];
     result[action] = (...params: any): Promise<any> =>
