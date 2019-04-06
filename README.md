@@ -24,11 +24,11 @@ export const DummyCounter = NaivResource(0);
 
 export const Books = Resource({
   get: {
-    epic: wrap(async () => [{ id: 1, name: 'Book A' }, { id: 2, name: 'Book B' }]),
+    epic: async () => [{ id: 1, name: 'Book A' }, { id: 2, name: 'Book B' }],
     reducer: (curr, val) => val, // ignorable if it's simple substitution like this
   },
   post: {
-    epic: wrap(async (name) => ({ name, id: Math.floor(Math.random() * 100000) })),
+    epic: async (name) => ({ name, id: Math.floor(Math.random() * 100000) }),
     reducer: (curr, val) => [...curr, val],
   }
 };
@@ -120,6 +120,10 @@ const Demo = () => {
   - `lock`: if set to `true`, the Resource would stop reacting to any action on it until the current action finishes;
     useful for HTTP request throttling.
 
+- `BehaviorResource({actionName: {epic, reducer}, ...}, seed)`
+
+  > Almost the same as `Resource`, except that it has `seed` as initial value
+
 - `NaiveResource(initVal)`
 
   > create a resource with an initial value, expose a `set` call to update its value
@@ -130,3 +134,8 @@ const Demo = () => {
 
 - `wrap(anyFunc)`:
   > takes in any function and convert it into a function that takes the same parameters and returns an observable containing the result
+
+## Known Issues
+
+- Type info is missing without a seed value
+- Type info is not propogated correctly even with a seed value (for my VS Code at least)
