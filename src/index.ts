@@ -85,7 +85,7 @@ export function NaiveSetter<R>(): IAction<R, R> {
 }
 
 export function NaiveResource<R>(init: R) {
-  return BehaviorResource({ set: NaiveSetter() }, init);
+  return BehaviorResource({ set: NaiveSetter<R>() }, init);
 }
 
 function LocalStorage(): ILocalStorage {

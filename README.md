@@ -122,7 +122,8 @@ const Demo = () => {
 
 - `BehaviorResource({actionName: {epic, reducer}, ...}, seed)`
 
-  > Almost the same as `Resource`, except that it has `seed` as initial value
+  > Almost the same as `Resource`, except that it has `seed` as initial value.
+  > Just like `Observable` and `BehaviorObservable`.
 
 - `NaiveResource(initVal)`
 
@@ -138,4 +139,3 @@ const Demo = () => {
 ## Known Issues
 
 - Type info is missing without a seed value
-- Type info is not propogated correctly even with a seed value (for my VS Code at least)
