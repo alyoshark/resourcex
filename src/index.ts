@@ -8,6 +8,8 @@ function DEFAULT_REDUCER<R>(_: R, val: R): R {
   return val;
 }
 
+function identity<R>(x: R): R { return x; }
+
 export function Resource<R>(spec: ISpec<R>, seed?: R): IResource<R> {
   const scanner = (curr: R, { action, data }: { action: string; data: any }) =>
     (spec[action].reducer || DEFAULT_REDUCER)(curr, data);
@@ -60,7 +62,7 @@ function resourceInit<R>(
       new Promise((resolve, reject) => {
         if (lock && locker) return;
         if (lock) setLocker(true);
-        const res = epic(...params);
+        const res = epic ? epic(...params) : identity(params[0]); // first of params or undefined
         const subscriber = Subscriber.create(
           (data: any) => {
             subject.next({ action, data });
