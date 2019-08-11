@@ -1,7 +1,7 @@
 {
   "name": "resourcex",
-  "version": "0.0.9",
-  "description": "Utilities to wrap global variables into observables without the learning curve of rxjs",
+  "version": "0.1.0-alpha.1",
+  "description": "ResourceX - Utilities to wrap global variables into rxjs observables with **reduced** learning curve",
   "main": "lib/index.js",
   "files": [
     "lib/**/*"
