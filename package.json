@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/xch91/resourcex",
   "dependencies": {
-    "rxjs": "^6.4.0"
+    "rxjs": "^6.5.2"
   },
   "devDependencies": {
     "typescript": "^3.4.1"
