@@ -7,12 +7,15 @@
   "license": "MIT",
   "homepage": "https://github.com/xch91/resourcex/examples",
   "dependencies": {
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0",
     "rxjs": "^6.5.2",
     "vue": "^2.6.10",
     "vue-rx": "^6.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.5.5",
+    "@babel/preset-react": "^7.0.0",
     "babel-loader": "^8.0.6",
     "html-webpack-plugin": "^3.2.0",
     "vue-loader": "^15.7.1",

@@ -7,7 +7,7 @@ const dir = (...f) => path.join(__dirname, ...f);
 
 const config = {
   mode: 'development',
-  entry: dir('src', 'vue', 'main.js'),
+  entry: dir('src', 'react', 'main.js'),
   devtool: 'source-map',
   output: { publicPath: '/' },
   resolve: { extensions: ['.js', '.vue'] },
