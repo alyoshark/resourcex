@@ -8,7 +8,7 @@ export const Resource = <R>(init: R, actions: { [s: string]: Function }) => {
       const action = async (...args: any[]) => {
         const state = subject.getValue();
         const result = await actions[k](state, ...args);
-        subject.next({ ...state, ...result });
+        subject.next({ ...subject.getValue(), ...result });
         return result;
       };
       return { ...acc, [k]: action };
@@ -33,7 +33,7 @@ export const LocalStorageResource = <R>(
       const action = async (...args: any[]) => {
         const state = subject.getValue();
         const result = await actions[k](state, ...args);
-        const newVal = { ...state, ...result };
+        const newVal = { ...subject.getValue(), ...result };
         window.localStorage.setItem(key, JSON.stringify(newVal));
         subject.next(newVal);
         return result;
