@@ -1,10 +1,43 @@
 import { BehaviorSubject } from 'rxjs';
 
+const _predef = new Set([
+  // BehaviorSubject
+  'value',
+  'getValue',
+  'next',
+
+  // Subject
+  'observers',
+  'closed',
+  'isStopped',
+  'hasError',
+  'thrownError',
+  'lift',
+  'error',
+  'complete',
+  'unsubscribe',
+  'asObservable',
+
+  // Observable
+  'source',
+  'operator',
+  'pipe',
+  'subscribe',
+  'lift',
+  'forEach',
+  'toPromise',
+]);
+
+const checkMethod = (name: string) => {
+  if (_predef.has(name)) throw Error(`"${name}" cannot be overwritten!!!`);
+};
+
 export const Resource = <R>(init: R, actions: { [s: string]: Function }) => {
   const subject = new BehaviorSubject(init);
   return Object.assign(
     subject,
     Object.keys(actions).reduce((acc, k) => {
+      checkMethod(k);
       const action = async (...args: any[]) => {
         const state = subject.getValue();
         const result = await actions[k](state, ...args);
@@ -30,6 +63,7 @@ export const LocalStorageResource = <R>(
   return Object.assign(
     subject,
     Object.keys(actions).reduce((acc, k) => {
+      checkMethod(k);
       const action = async (...args: any[]) => {
         const state = subject.getValue();
         const result = await actions[k](state, ...args);
