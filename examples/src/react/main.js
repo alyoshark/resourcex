@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 
-import { useObservable } from './hooks';
+import useResource from 'resource-react-hook';
 import { Profile } from '../resources';
 
 const App = () => {
-  const profile$ = useObservable(Profile);
+  const profile$ = useResource(Profile);
 
   // on creation do a round of fetch
   useEffect(() => {
@@ -19,7 +19,7 @@ const App = () => {
         {profile$.uid} called {profile$.version} times
       </h2>
       <button onClick={() => Profile.setName('New Name')}>Set New Name</button>
-      <button onClick={() => Profile.increaseVersion()}>Bump Version</button>
+      <button onClick={Profile.increaseVersion}>Bump Version</button>
     </div>
   );
 };

@@ -41,7 +41,7 @@ export const Profile = Resource(
       return { version: version + 1 };
     },
     async setName(_, name) {
-      const { success } = await setName(val);
+      const { success } = await setName(name);
       if (success) return { name };
       else throw Error('update-failed');
     },
@@ -61,22 +61,22 @@ new Vue({
   el: '#app',
   template: `
     <div>
-      <h1>Hello, {{ profile$.name }}</h1>
+      <h1>Hello, {{ profile$.name }}!</h1>
       <h2>{{ profile$.uid }} called {{ profile$.version }} times</h2>
       <button @click="setName('New Name')">Set New Name</button>
       <button @click="incProfileVersion">Bump Version</button>
     </div>
   `,
 
-  subscriptions: {
-    profile$: Profile,
+  subscriptions() {
+    return { profile$: Profile };
   },
 
   methods: {
     setName(name) {
       Profile.setName(name); // <- discard original return
     },
-    incProfileVersion() {
+    async incProfileVersion() {
       const { version } = await Profile.increaseVersion();
       console.log(version); // <- captured original return
     },
@@ -85,29 +85,41 @@ new Vue({
   created() {
     Profile.get();
   },
-})
+});
 ```
 
 ### React
 
-For integrating with React, [useObservable](https://github.com/streamich/react-use/blob/master/docs/useObservable.md)
-should be the handy hook to install (or write something to provide similar register / unregistrater purposes)
-
-_To be improved_
+For integrating with React, consider using [resource-react-hook](https://www.npmjs.com/package/resource-react-hook).
 
 ```javascript
-import { useObservable } from 'react-use';
-import { Profile } from './resources';
+import React, { useEffect } from 'react';
+import ReactDOM from 'react-dom';
 
-const Demo = () => {
-  const profile$ = useObservable(Profile);
+import useResource from 'resource-react-hook';
+import { Profile } from '../resources';
+
+const App = () => {
+  const profile$ = useResource(Profile);
+
+  // on creation do a round of fetch
+  useEffect(() => {
+    Profile.get();
+  }, []);
 
   return (
-    <button onClick={() => Profile.increaseVersion()}>
-      This is version {profile$.version}
-    </button>
+    <div>
+      <h1>Hello, {profile$.name}!</h1>
+      <h2>
+        {profile$.uid} called {profile$.version} times
+      </h2>
+      <button onClick={() => Profile.setName('New Name')}>Set New Name</button>
+      <button onClick={Profile.increaseVersion}>Bump Version</button>
+    </div>
   );
 };
+
+ReactDOM.render(<App />, document.getElementById('app'));
 ```
 
 ## API

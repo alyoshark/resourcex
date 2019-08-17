@@ -9,6 +9,7 @@
   "dependencies": {
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
+    "resource-react-hook": "0.0.1",
     "rxjs": "^6.5.2",
     "vue": "^2.6.10",
     "vue-rx": "^6.2.0"
