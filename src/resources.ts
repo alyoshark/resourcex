@@ -32,8 +32,12 @@ const checkMethod = (name: string) => {
   if (_predef.has(name)) throw Error(`"${name}" cannot be overwritten!!!`);
 };
 
-export const Resource = <R>(init: R, actions: { [s: string]: Function }) => {
+export function Resource<R, S extends { [s: string]: Function }>(
+  init: R,
+  actions: S,
+): BehaviorSubject<R> & S {
   const subject = new BehaviorSubject(init);
+  const EMPTY_PROTO = {} as S;
   return Object.assign(
     subject,
     Object.keys(actions).reduce((acc, k) => {
@@ -45,20 +49,22 @@ export const Resource = <R>(init: R, actions: { [s: string]: Function }) => {
         return result;
       };
       return { ...acc, [k]: action };
-    }, {}),
+    }, EMPTY_PROTO),
   );
-};
+}
 
-export const NaiveResource = <R>(init: R) =>
+export function NaiveResource<R>(init: R) {
   Resource(init, { set: async (_: any, val: R) => val });
+}
 
-export const LocalStorageResource = <R>(
+export function LocalStorageResource<R, S extends { [s: string]: Function }>(
   key: string,
   init: R,
-  actions: { [s: string]: Function },
-) => {
+  actions: S,
+): BehaviorSubject<R> & S {
   const lsv = window.localStorage.getItem(key);
   if (!lsv) window.localStorage.setItem(key, JSON.stringify(init));
+  const EMPTY_PROTO = {} as S;
   const subject = new BehaviorSubject<R>(lsv ? JSON.parse(lsv) : init);
   return Object.assign(
     subject,
@@ -73,6 +79,6 @@ export const LocalStorageResource = <R>(
         return result;
       };
       return { ...acc, [k]: action };
-    }, {}),
+    }, EMPTY_PROTO),
   );
-};
+}

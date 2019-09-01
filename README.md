@@ -16,6 +16,8 @@ can easily make something more elaborate from these basic tools.
 
 ## Example
 
+Both Vue and React examples can be found inside [here](https://github.com/xch91/resourcex/tree/master/examples).
+
 ```javascript
 // api.js
 export async function getProfile() {
@@ -55,7 +57,7 @@ For integrating with Vue, it's recommended to install [vue-rx](https://github.co
 to ensure observable unregistrations are done correctly on unmount.
 
 ```javascript
-import { Profile } from './resources';
+import { Profile } from '../resources';
 
 new Vue({
   el: '#app',
