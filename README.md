@@ -1,6 +1,6 @@
 # resourcex
 
-> ResourceX - Utilities to wrap global variables into rxjs observables with **reduced** learning curve
+> resourcex - Utilities to wrap global variables into rxjs observables with **reduced** learning curve
 
 This project provides a few handy utilities to make global variables slightly easier to work with,
 comparing to traditional [Flux Architecture](https://facebook.github.io/flux/).
@@ -151,7 +151,7 @@ ReactDOM.render(<App />, document.getElementById('app'));
 
 ### Operators
 
-ResourceX also exposes a few rxjs operators for easier use, esp in transforming DOM events:
+resourcex also exposes a few rxjs operators for easier use, esp in transforming DOM events:
 
 - `catchMergeMap` / `catchFlatMap`
 - `catchConcatMap`
@@ -169,3 +169,8 @@ the following line triggers `Profile.get` call with *exhaust*ive strategy:
 
 > - `.subscribe()` is an empty subscription to kick start the streaming of events
 > - Here is a [good article](https://medium.com/@shairez/a-super-ninja-trick-to-learn-rxjss-switchmap-mergemap-concatmap-and-exhaustmap-forever-88e178a75f1b) explaining what flattening strategies rxjs provides
+
+## Change Log
+
+- 0.1.0: Major rewrite to return `Resource` as `Subject` directly, and provide separate operators
+- 0.0.1 ~ 0.0.9: Pilot versions with `$` as exposed `Subject` and no access to current state; not recommended anymore
