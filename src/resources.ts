@@ -34,7 +34,7 @@ const checkMethod = (name: string) => {
 
 export function Resource<R, S extends { [s: string]: Function }>(
   init: R,
-  actions: S,
+  actions: S = {} as S,
 ): BehaviorSubject<R> & S {
   const subject = new BehaviorSubject(init);
   const EMPTY_PROTO = {} as S;
@@ -60,7 +60,7 @@ export function NaiveResource<R>(init: R) {
 export function LocalStorageResource<R, S extends { [s: string]: Function }>(
   key: string,
   init: R,
-  actions: S,
+  actions: S = {} as S,
 ): BehaviorSubject<R> & S {
   const lsv = window.localStorage.getItem(key);
   if (!lsv) window.localStorage.setItem(key, JSON.stringify(init));
