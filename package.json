@@ -1,13 +1,13 @@
 {
   "name": "resourcex",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "ResourceX - Utilities to wrap global variables into rxjs observables with **reduced** learning curve",
   "main": "lib/index.js",
   "files": [
     "lib/**/*"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "build": "tsc -d"
   },
   "repository": {

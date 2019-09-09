@@ -172,5 +172,6 @@ the following line triggers `Profile.get` call with *exhaust*ive strategy:
 
 ## Change Log
 
+- 0.1.1: Allow empty `actions` as pure, unmutatable global variable
 - 0.1.0: Major rewrite to return `Resource` as `Subject` directly, and provide separate operators
 - 0.0.1 ~ 0.0.9: Pilot versions with `$` as exposed `Subject` and no access to current state; not recommended anymore
