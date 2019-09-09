@@ -32,12 +32,13 @@ const checkMethod = (name: string) => {
   if (_predef.has(name)) throw Error(`"${name}" cannot be overwritten!!!`);
 };
 
-export function Resource<R, S extends { [s: string]: Function }>(
-  init: R,
-  actions: S = {} as S,
-): BehaviorSubject<R> & S {
+export function Resource<
+  R,
+  S extends { [s: string]: Function },
+  T extends { [s in keyof S]: Function }
+>(init: R, actions: S = {} as S): BehaviorSubject<R> & T {
   const subject = new BehaviorSubject(init);
-  const EMPTY_PROTO = {} as S;
+  const EMPTY_PROTO = {} as T;
   return Object.assign(
     subject,
     Object.keys(actions).reduce((acc, k) => {
@@ -57,14 +58,14 @@ export function NaiveResource<R>(init: R) {
   Resource(init, { set: async (_: any, val: R) => val });
 }
 
-export function LocalStorageResource<R, S extends { [s: string]: Function }>(
-  key: string,
-  init: R,
-  actions: S = {} as S,
-): BehaviorSubject<R> & S {
+export function LocalStorageResource<
+  R,
+  S extends { [s: string]: Function },
+  T extends { [s in keyof S]: Function }
+>(key: string, init: R, actions: S = {} as S): BehaviorSubject<R> & T {
   const lsv = window.localStorage.getItem(key);
   if (!lsv) window.localStorage.setItem(key, JSON.stringify(init));
-  const EMPTY_PROTO = {} as S;
+  const EMPTY_PROTO = {} as T;
   const subject = new BehaviorSubject<R>(lsv ? JSON.parse(lsv) : init);
   return Object.assign(
     subject,

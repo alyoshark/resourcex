@@ -128,9 +128,9 @@ ReactDOM.render(<App />, document.getElementById('app'));
 
 ### Resources
 
-- `Resource(initial, actions)`
+- `Resource(initial, actions?)`
 
-  Creates a resource (as an rxjs `BehaviorSubject`) with `actions` defining how to change its value. Each action is a function that
+  Creates a resource (as an rxjs `BehaviorSubject`) with (optionally) `actions` defining how to change its value. Each action is a function that
 
   - Takes in as first parameter `state`, which is the current value of the subject
   - Returns a value which would be `Object.assign`ed into the original `state`
@@ -145,7 +145,7 @@ ReactDOM.render(<App />, document.getElementById('app'));
 
   > create a resource with an initial value, expose a `set` call to update its value
 
-- `LocalStorageResource(localStorageKey, initial, actions)`
+- `LocalStorageResource(localStorageKey, initial, actions?)`
 
   - Almost the same as a `Resource`, just that the value is persisted into local storage with key specified
 
