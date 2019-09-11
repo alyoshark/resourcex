@@ -55,7 +55,7 @@ export function Resource<
 }
 
 export function NaiveResource<R>(init: R) {
-  Resource(init, { set: async (_: any, val: R) => val });
+  return Resource(init, { set: async (_: any, val: R) => val });
 }
 
 export function LocalStorageResource<
@@ -66,20 +66,19 @@ export function LocalStorageResource<
   const lsv = window.localStorage.getItem(key);
   if (!lsv) window.localStorage.setItem(key, JSON.stringify(init));
   const EMPTY_PROTO = {} as T;
-  const subject = new BehaviorSubject<R>(lsv ? JSON.parse(lsv) : init);
-  return Object.assign(
-    subject,
-    Object.keys(actions).reduce((acc, k) => {
-      checkMethod(k);
-      const action = async (...args: any[]) => {
-        const state = subject.getValue();
-        const result = await actions[k](state, ...args);
-        const newVal = { ...subject.getValue(), ...result };
-        window.localStorage.setItem(key, JSON.stringify(newVal));
-        subject.next(newVal);
-        return result;
-      };
-      return { ...acc, [k]: action };
-    }, EMPTY_PROTO),
+  return Resource(
+    lsv ? JSON.parse(lsv) : init,
+    Object.keys(actions).reduce(
+      (acc, k) => ({
+        ...acc,
+        [k]: async (state: any, ...args: any[]) => {
+          const result = await actions[k](state, ...args);
+          const newVal = { ...state, ...result };
+          window.localStorage.setItem(key, JSON.stringify(newVal));
+          return result;
+        },
+      }),
+      EMPTY_PROTO,
+    ),
   );
 }
