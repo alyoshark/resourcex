@@ -15,12 +15,11 @@ describe('Resource', () => {
     });
   });
 
-  test('Counter is incremented correctly', async done => {
+  test('Counter is incremented correctly', async () => {
     const c = getCounter();
     await c.add(1);
-    c.subscribe(data => {
-      expect(data.val).toBe(1);
-      done();
+    c.subscribe(({ val }) => {
+      expect(val).toBe(1);
     });
   });
 

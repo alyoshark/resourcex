@@ -1,4 +1,5 @@
 import { BehaviorSubject } from 'rxjs';
+import { TSnapshot, wrapMiddleware } from './middleware';
 
 const _predef = new Set([
   // BehaviorSubject
@@ -36,8 +37,13 @@ export function Resource<
   R,
   S extends { [s: string]: Function },
   T extends { [s in keyof S]: Function }
->(init: R, actions: S = {} as S): BehaviorSubject<R> & T {
-  const subject = new BehaviorSubject(init);
+>(
+  init: R,
+  actions: S = {} as S,
+  middleware: (x: any) => Promise<any> = async x => x,
+  initHook: (x: R) => R = x => x,
+): BehaviorSubject<R> & T {
+  const subject = new BehaviorSubject(initHook(init));
   const EMPTY_PROTO = {} as T;
   return Object.assign(
     subject,
@@ -45,7 +51,9 @@ export function Resource<
       checkMethod(k);
       const action = async (...args: any[]) => {
         const state = subject.getValue();
-        const result = await actions[k](state, ...args);
+        const val = await actions[k](state, ...args);
+        const snapshot = { val, args, state, action: k };
+        const { val: result } = await middleware(snapshot);
         subject.next({ ...subject.getValue(), ...result });
         return result;
       };
@@ -63,22 +71,14 @@ export function LocalStorageResource<
   S extends { [s: string]: Function },
   T extends { [s in keyof S]: Function }
 >(key: string, init: R, actions: S = {} as S): BehaviorSubject<R> & T {
-  const lsv = window.localStorage.getItem(key);
-  if (!lsv) window.localStorage.setItem(key, JSON.stringify(init));
-  const EMPTY_PROTO = {} as T;
-  return Resource(
-    lsv ? JSON.parse(lsv) : init,
-    Object.keys(actions).reduce(
-      (acc, k) => ({
-        ...acc,
-        [k]: async (state: any, ...args: any[]) => {
-          const result = await actions[k](state, ...args);
-          const newVal = { ...state, ...result };
-          window.localStorage.setItem(key, JSON.stringify(newVal));
-          return result;
-        },
-      }),
-      EMPTY_PROTO,
-    ),
-  );
+  const middleware = ({ val }: TSnapshot<R>) => {
+    window.localStorage.setItem(key, JSON.stringify(val));
+    return val;
+  };
+  const initHook = (x: R) => {
+    const lsv = window.localStorage.getItem(key);
+    if (!lsv) window.localStorage.setItem(key, JSON.stringify(x));
+    return lsv ? JSON.parse(lsv) : x;
+  };
+  return Resource(init, actions, wrapMiddleware([middleware]), initHook);
 }
