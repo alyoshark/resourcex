@@ -128,7 +128,7 @@ ReactDOM.render(<App />, document.getElementById('app'));
 
 ### Resources
 
-- `Resource(initial, actions?)`
+- `Resource(initial, actions?, middleware?, initHook?)`
 
   Creates a resource (as an rxjs `BehaviorSubject`) with (optionally) `actions` defining how to change its value. Each action is a function that
 
@@ -138,6 +138,8 @@ ReactDOM.render(<App />, document.getElementById('app'));
   Therefore, the value `state` could be destructurally assigned.
   It could be left as `_` or skipped with a comma if there's no dependency on previous value.
   Return value of `Resource.action(..args)` respect the the original action function.
+
+  _document and examples for `middleware` and `initHook` are under construction hohoho_
 
 - `NaiveResource(initial)`
 
@@ -172,6 +174,7 @@ the following line triggers `Profile.get` call with *exhaust*ive strategy:
 
 ## Change Log
 
+- 0.1.2: Fix `NaiveResource` null returning bug (also the undocumented middleware API)
 - 0.1.1: Allow empty `actions` as pure, unmutatable global variable
 - 0.1.0: Major rewrite to return `Resource` as `Subject` directly, and provide separate operators
 - 0.0.1 ~ 0.0.9: Pilot versions with `$` as exposed `Subject` and no access to current state; not recommended anymore

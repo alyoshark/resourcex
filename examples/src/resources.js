@@ -1,5 +1,6 @@
 import { Resource } from '../../lib'; // change to 'resourcex'
 import { getProfile, setName } from './api';
+import { wrapMiddleware } from '../../lib/middleware';
 
 export const Profile = Resource(
   { uid: 0, name: '', version: 0 },
@@ -17,4 +18,14 @@ export const Profile = Resource(
       else throw Error('update-failed');
     },
   },
+  wrapMiddleware([
+    original => {
+      console.log(original);
+      return { padd: 'something extra', val: original.val };
+    },
+    padded => {
+      console.log('The chaining of middlewares!');
+      return padded.val.val;
+    },
+  ]),
 );
