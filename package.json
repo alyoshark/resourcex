@@ -35,5 +35,6 @@
     "jest": "^24.9.0",
     "ts-jest": "^24.0.2",
     "typescript": "^3.4.1"
-  }
+  },
+  "sideEffects": false
 }
