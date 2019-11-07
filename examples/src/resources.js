@@ -3,11 +3,11 @@ import { getProfile, setName } from './api';
 import { wrapMiddleware } from '../../lib/middleware';
 
 export const Profile = Resource(
-  { uid: 0, name: '', version: 0 },
+  { uid: 0, name: '', age: 0 },
   {
     async get() {
       const profile = await getProfile();
-      return { ...profile, version: 1 };
+      return { ...profile };
     },
     increaseVersion({ version }) {
       return { version: version + 1 };

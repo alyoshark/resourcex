@@ -1,0 +1,18 @@
+{
+  "name": "resourcex devenv",
+  "dockerFile": "Dockerfile",
+  "appPort": 9876,
+  "runArgs": [
+    "-v",
+    "${env:HOME}${env:USERPROFILE}/.ssh:/root/.ssh-localhost:ro"
+  ],
+  "postCreateCommand": "apt-get update && apt-get install -y git && npm i && cp -r /root/.ssh-localhost ~ && chown -R $(id -u):$(id -g) ~/.ssh-localhost && mv ~/.ssh-localhost ~/.ssh && chmod 700 ~/.ssh && chmod 600 ~/.ssh/*",
+  "extensions": ["esbenp.prettier-vscode"],
+  "settings": {
+    "editor.formatOnSave": true,
+    "prettier.arrowParens": "always",
+    "prettier.endOfLine": "lf",
+    "prettier.singleQuote": true,
+    "prettier.trailingComma": "all"
+  }
+}

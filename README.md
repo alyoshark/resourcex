@@ -2,6 +2,8 @@
 
 > resourcex - Utilities to wrap global variables into rxjs observables with **reduced** learning curve
 
+> Disclaimer: The package is not related to SCHMUTTERER+PARTNER Information Technology or their RESOURCEX Trademark
+
 This project provides a few handy utilities to make global variables slightly easier to work with,
 comparing to traditional [Flux Architecture](https://facebook.github.io/flux/).
 

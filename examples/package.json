@@ -1,7 +1,7 @@
 {
   "name": "resourcex-examples",
   "scripts": {
-    "dev": "webpack-dev-server --inline --hot --disable-host-check --host 0.0.0.0"
+    "dev": "webpack-dev-server --inline --hot --disable-host-check --host 0.0.0.0 --port 9876"
   },
   "author": "Xie Chenhong <chenhong.xie@gmail.com>",
   "license": "MIT",
