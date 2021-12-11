@@ -1,5 +1,7 @@
 # resourcex
 
+> This project is not longer of practical use with the dawning of Vue composition API
+
 > resourcex - Utilities to wrap global variables into rxjs observables with **reduced** learning curve
 
 > Disclaimer: The package is not related to SCHMUTTERER+PARTNER Information Technology or their RESOURCEX Trademark
